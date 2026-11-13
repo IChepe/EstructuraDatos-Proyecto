@@ -108,41 +108,96 @@ public class Controladores {
         return tramite;
     }
 
-    //Escoge la cola segun el tipo y el tamaño
-    public static Cola escogerCola(String tipo, Cola c1, Cola c2, Cola c3, Cola c4) {
+    //Login: dos usuarios, maximo 3 intentos
+    public static boolean login() {
 
-        if (tipo.equals("P")) {
-            return c1;
-        } else if (tipo.equals("A")) {
-            return c2;
-        } else if (c3.tamano() <= c4.tamano()) {
-            return c3;
-        } else {
-            return c4;
+        int intentos = 0;
+
+        while (intentos < 3) {
+
+            String usuario = JOptionPane.showInputDialog("^^^^^^^^ LOGIN ^^^^^^^^\nIngrese el usuario");
+            String clave = JOptionPane.showInputDialog("Ingrese la contraseña");
+
+            if (usuario.equals("admin") && clave.equals("1234")) {
+                return true;
+            } else if (usuario.equals("cajero") && clave.equals("5678")) {
+                return true;
+            }
+
+            intentos += 1;
+            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos\nIntentos restantes: " + (3 - intentos));
         }
-    }
 
-    //Revisa si el ID ya existe en alguna caja
-    public static boolean existeId(int id, Cola c1, Cola c2, Cola c3, Cola c4) {
-
-        if (c1.existe(id)) {
-            return true;
-        } else if (c2.existe(id)) {
-            return true;
-        } else if (c3.existe(id)) {
-            return true;
-        } else if (c4.existe(id)) {
-            return true;
-        }
+        JOptionPane.showMessageDialog(null, "Demasiados intentos, cerrando el sistema");
         return false;
     }
 
+    //Modulo 0: si ya existe prod.txt lo carga, si no pide la configuracion
+    public static Configuracion iniciarConfiguracion() {
+
+        Configuracion conf = new Configuracion();
+
+        if (conf.existe()) {
+            conf.cargar();
+        } else {
+            conf.configurar();
+        }
+
+        return conf;
+    }
+
+    //Crea una cola por cada caja segun la configuracion
+    public static ColaCajas crearCajas(Configuracion conf) {
+
+        ColaCajas cajas = new ColaCajas();
+        int i = 1;
+
+        while (i <= conf.getCantCajas()) {
+            cajas.agregar(new Cola(i, conf.tipoCaja(i)));
+            i += 1;
+        }
+
+        return cajas;
+    }
+
+    //Menu de Atencion de Clientes
+    public static void menuAtencion(ColaCajas cajas) {
+
+        String res;
+
+        do {
+
+            res = JOptionPane.showInputDialog("^^^^^^^^ ATENCION DE CLIENTES ^^^^^^^^\n"
+                    + "1)Crear tiquete \n2)Mostrar cajas \n0)Volver\n\nIngrese una opcion (0-2)");
+
+            switch (res) {
+
+                case "0":
+                    JOptionPane.showMessageDialog(null, "Regresando al menu principal");
+                    break;
+
+                case "1":
+                    crearTiquete(cajas);
+                    break;
+
+                case "2":
+                    JOptionPane.showMessageDialog(null, cajas);
+                    break;
+
+                default:
+                    JOptionPane.showMessageDialog(null, "Error: opcion no valida");
+            }
+
+        } while (!res.equals("0"));
+
+    }
+
     //Modulo 1.1: Creacion de tiquetes
-    public static void crearTiquete(Cola c1, Cola c2, Cola c3, Cola c4) {
+    public static void crearTiquete(ColaCajas cajas) {
 
         int id = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el ID del cliente"));
 
-        if (existeId(id, c1, c2, c3, c4)) {
+        if (cajas.existeId(id)) {
             JOptionPane.showMessageDialog(null, "Error: ese ID ya tiene un tiquete");
         } else {
 
@@ -157,15 +212,10 @@ public class Controladores {
                 tramite = menuTramite();
             }
 
-            Cola c = escogerCola(tipo, c1, c2, c3, c4);
+            Cola c = cajas.buscarCola(tipo);
             c.agregar(new Tiquete(nombre, id, edad, tramite, tipo));
             c.mostrarTurno();
         }
-    }
-
-    //Muestra todas las cajas
-    public static void mostrarCajas(Cola c1, Cola c2, Cola c3, Cola c4) {
-        JOptionPane.showMessageDialog(null, c1 + "\n" + c2 + "\n" + c3 + "\n" + c4);
     }
 
 }
