@@ -49,6 +49,17 @@ public class ColaCajas {
         return false;
     }
 
+    //Muestra cuantas personas tiene cada caja en fila
+    public String personasEnFila() {
+        String r = "";
+        NodoCaja aux = prim;
+        while (aux != null) {
+            r += "Caja " + aux.getDato().getNumCaja() + " | tiene " + aux.getDato().tamano() + " personas en fila\n";
+            aux = aux.getSiguiente();
+        }
+        return r;
+    }
+
     @Override
     public String toString() {
         String r = "";

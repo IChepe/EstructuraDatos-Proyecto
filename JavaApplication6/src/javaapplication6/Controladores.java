@@ -168,7 +168,7 @@ public class Controladores {
         do {
 
             res = JOptionPane.showInputDialog("^^^^^^^^ ATENCION DE CLIENTES ^^^^^^^^\n"
-                    + "1)Crear tiquete \n2)Mostrar cajas \n0)Volver\n\nIngrese una opcion (0-2)");
+                    + "1)Crear tiquete \n2)Mostrar cajas \n3)Personas en fila \n0)Volver\n\nIngrese una opcion (0-3)");
 
             switch (res) {
 
@@ -182,6 +182,10 @@ public class Controladores {
 
                 case "2":
                     JOptionPane.showMessageDialog(null, cajas);
+                    break;
+
+                case "3":
+                    JOptionPane.showMessageDialog(null, cajas.personasEnFila());
                     break;
 
                 default:
