@@ -1,10 +1,15 @@
 package javaapplication6;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 public class Tiquete {
 
     private String nombre;
     private int id;
     private int edad;
+    private String horaCreacion;
+    private String horaAtencion;
     private String tramite;
     private String tipo;
 
@@ -14,6 +19,10 @@ public class Tiquete {
         this.edad = edad;
         this.tramite = tramite;
         this.tipo = tipo;
+        //Hora de creacion: la obtiene del sistema con formato hora:minutos:segundos
+        this.horaCreacion = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+        //Hora de atencion: por defecto -1 hasta que sea atendido
+        this.horaAtencion = "-1";
     }
 
     public String getNombre() {
@@ -40,6 +49,18 @@ public class Tiquete {
         this.edad = edad;
     }
 
+    public String getHoraCreacion() {
+        return horaCreacion;
+    }
+
+    public String getHoraAtencion() {
+        return horaAtencion;
+    }
+
+    public void setHoraAtencion(String horaAtencion) {
+        this.horaAtencion = horaAtencion;
+    }
+
     public String getTramite() {
         return tramite;
     }
@@ -59,6 +80,7 @@ public class Tiquete {
     @Override
     public String toString() {
         return "Tiquete{" + "nombre=" + nombre + ", id=" + id + ", edad=" + edad
+                + ", horaCreacion=" + horaCreacion + ", horaAtencion=" + horaAtencion
                 + ", tramite=" + tramite + ", tipo=" + tipo + '}';
     }
 
