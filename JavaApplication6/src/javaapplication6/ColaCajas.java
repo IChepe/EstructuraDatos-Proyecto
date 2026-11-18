@@ -37,6 +37,18 @@ public class ColaCajas {
         return menor;
     }
 
+    //Busca una caja por su numero (null si no existe)
+    public Cola buscarCaja(int numCaja) {
+        NodoCaja aux = prim;
+        while (aux != null) {
+            if (aux.getDato().getNumCaja() == numCaja) {
+                return aux.getDato();
+            }
+            aux = aux.getSiguiente();
+        }
+        return null;
+    }
+
     //Revisa si el ID ya tiene tiquete en alguna caja
     public boolean existeId(int id) {
         NodoCaja aux = prim;

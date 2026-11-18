@@ -26,6 +26,27 @@ public class Cola {
         return prim == null;
     }
 
+    //Tiquete que esta en atencion: el primero de la cola (null si la caja esta desocupada)
+    public Tiquete primero() {
+        if (vacia()) {
+            return null;
+        }
+        return prim.getDato();
+    }
+
+    //Desencolar: saca de la cola el tiquete que ya fue atendido
+    public Tiquete quitar() {
+        if (vacia()) {
+            return null;
+        }
+        Tiquete t = prim.getDato();
+        prim = prim.getSiguiente();
+        if (prim == null) {
+            ult = null;
+        }
+        return t;
+    }
+
     //Encolar
     public void agregar(Tiquete t) {
         Nodo nuevo = new Nodo(t);

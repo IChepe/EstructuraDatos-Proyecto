@@ -1,5 +1,7 @@
 package javaapplication6;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import javax.swing.JOptionPane;
 
 public class Controladores {
@@ -168,7 +170,7 @@ public class Controladores {
         do {
 
             res = JOptionPane.showInputDialog("^^^^^^^^ ATENCION DE CLIENTES ^^^^^^^^\n"
-                    + "1)Crear tiquete \n2)Mostrar cajas \n3)Personas en fila \n0)Volver\n\nIngrese una opcion (0-3)");
+                    + "1)Crear tiquete \n2)Mostrar cajas \n3)Personas en fila \n4)Tiquete atendido \n0)Volver\n\nIngrese una opcion (0-4)");
 
             switch (res) {
 
@@ -188,12 +190,54 @@ public class Controladores {
                     JOptionPane.showMessageDialog(null, cajas.personasEnFila());
                     break;
 
+                case "4":
+                    tiqueteAtendido(cajas);
+                    break;
+
                 default:
                     JOptionPane.showMessageDialog(null, "Error: opcion no valida");
             }
 
         } while (!res.equals("0"));
 
+    }
+
+    //Modulo 1.2: el tiquete pasa a ser atendido, se pone la hora del sistema y se guarda en reportes
+    public static void iniciarAtencion(Cola c) {
+
+        Tiquete t = c.primero();
+        String horaActual = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+        t.setHoraAtencion(horaActual);
+        Reportes.guardar(c.getNumCaja(), t);
+    }
+
+    //Modulo 1.2 (funcion 2): "Tiquete atendido": el cajero termino con un cliente y se llama al siguiente de la cola
+    public static void tiqueteAtendido(ColaCajas cajas) {
+
+        int numCaja = Integer.parseInt(JOptionPane.showInputDialog("^^^^^^^^ TIQUETE ATENDIDO ^^^^^^^^\nIngrese el numero de caja"));
+
+        Cola c = cajas.buscarCaja(numCaja);
+
+        if (c == null) {
+            JOptionPane.showMessageDialog(null, "Error: la caja " + numCaja + " no existe");
+        } else if (c.vacia()) {
+            JOptionPane.showMessageDialog(null, "La caja " + numCaja + " esta desocupada, no tiene a nadie en atencion");
+        } else {
+
+            //Sale de la cola el tiquete que ya fue atendido
+            Tiquete atendido = c.quitar();
+            String r = "Tiquete atendido en la caja " + numCaja + ":\n" + atendido + "\n\n";
+
+            if (c.vacia()) {
+                r += "No hay mas clientes en fila: la caja queda desocupada";
+            } else {
+                //El siguiente cliente de la cola pasa a ser atendido
+                iniciarAtencion(c);
+                r += "Pasa a ser atendido:\n" + c.primero();
+            }
+
+            JOptionPane.showMessageDialog(null, r);
+        }
     }
 
     //Modulo 1.1: Creacion de tiquetes
@@ -218,6 +262,12 @@ public class Controladores {
 
             Cola c = cajas.buscarCola(tipo);
             c.agregar(new Tiquete(nombre, id, edad, tramite, tipo));
+
+            //Modulo 1.2 (funcion 1): si la caja estaba desocupada pasa a ser atendido inmediatamente
+            if (c.tamano() == 1) {
+                iniciarAtencion(c);
+            }
+
             c.mostrarTurno();
         }
     }
